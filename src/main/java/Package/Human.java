@@ -10,7 +10,7 @@ public class Human {
     @CustomDateFormat(format = "dd-MM-yyyy")
      private LocalDate birthDate;
 
-    public Human(String firstName, String lastName, String hobby, LocalDate of){
+    public Human(String firstName, String lastName, String hobby, LocalDate birthDate){
         this.firstName = firstName;
         this.lastName = lastName;
         this.hobby = hobby;
