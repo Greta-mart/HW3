@@ -41,9 +41,7 @@ public class Json {
 
     private void appendFieldValue(Object result, Field field, StringBuffer buffer) throws IllegalAccessException {
         Class<?> fieldType = field.getType();
-        if (fieldType.isArray()) {
-            buffer.append(result);
-        } else if (fieldType.equals(String.class)) {
+        if (fieldType.equals(String.class)) {
             // String
             buffer.append("\"").append(result).append("\"");
         } else if (fieldType.isAssignableFrom(LocalDate.class)) {
