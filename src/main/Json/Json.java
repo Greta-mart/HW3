@@ -40,8 +40,7 @@ public class Json {
     private void appendFieldValue(Object result, Field field, StringBuffer buffer) throws IllegalAccessException {
         Class<?> fieldType = field.getType();
         if (fieldType.isArray()) {
-            buffer.append(result).append(buffer);
-            //appendArray(result, buffer);
+            buffer.append(result);
         } else if (fieldType.equals(String.class)) {
             // String
             buffer.append("\"").append(result).append("\"");
