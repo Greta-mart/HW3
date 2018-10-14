@@ -1,4 +1,4 @@
-package Package;
+package skillsup;
 
 import com.google.gson.Gson;
 import java.time.LocalDate;

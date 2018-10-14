@@ -1,4 +1,4 @@
-package Package;
+package skillsup;
 
 import java.time.LocalDate;
 
