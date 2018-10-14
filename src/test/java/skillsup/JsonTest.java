@@ -19,7 +19,6 @@ public class JsonTest {
         json = new Json();
         human = new Human("Ivan", "Ivanov", "Guitar",
                 LocalDate.of(1985, Month.MARCH, 13));
-
     }
 
     @DisplayName("Happy path")
@@ -46,5 +45,4 @@ public class JsonTest {
         String expected = json.toJson(human);
         assertEquals(expected, json.toJson(human));
     }
-
 }
