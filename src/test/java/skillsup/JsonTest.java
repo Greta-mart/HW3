@@ -24,8 +24,11 @@ public class JsonTest {
     @DisplayName("Happy path")
     @org.junit.Test
     public void test1_toJson() throws IllegalAccessException {
-        String expected = json.toJson(human);
-        assertEquals(expected, json.toJson(human));
+        String str = "{\"firstName\":\"Ivan\","
+                + "\"lastName\":\"Ivanov\","
+                + "\"fun\":\"Guitar\","
+                + "\"birthDate\":13-03-1985}";
+        assertEquals(str, json.toJson(human));
     }
 
     @DisplayName("Happy path")
