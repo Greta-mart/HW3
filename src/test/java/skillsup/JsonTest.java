@@ -14,7 +14,7 @@ public class JsonTest {
     private Human human;
 
     @Before
-    public void init() throws IllegalAccessException {
+    public void init() {
         MockitoAnnotations.initMocks(this);
         json = new Json();
         human = new Human("Ivan", "Ivanov", "Guitar",
