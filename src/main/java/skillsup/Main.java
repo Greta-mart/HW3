@@ -10,9 +10,9 @@ public class Main {
                 LocalDate.of(1985, Month.MARCH, 13));
 
         Gson gson = new Gson();
-        String json1 = gson.toJson(human);
+        String json = gson.toJson(human);
 
-        System.out.println(json1);
+        System.out.println(json);
 
         Json service = new Json();
         System.out.println(service.toJson(human));

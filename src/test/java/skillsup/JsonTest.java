@@ -27,7 +27,7 @@ public class JsonTest {
         String str = "{\"firstName\":\"Ivan\","
                 + "\"lastName\":\"Ivanov\","
                 + "\"fun\":\"Guitar\","
-                + "\"birthDate\":13-03-1985}";
+                + "\"birthDate\":\"13-03-1985\"}";
         assertEquals(str, json.toJson(human));
     }
 
@@ -36,8 +36,10 @@ public class JsonTest {
     public void test2_toJson() throws IllegalAccessException {
         human = new Human(null, "Ivanov", "Guitar",
                 LocalDate.of(1985, Month.MARCH, 13));
-        String expected = json.toJson(human);
-        assertEquals(expected, json.toJson(human));
+        String str = "{\"lastName\":\"Ivanov\","
+                + "\"fun\":\"Guitar\","
+                + "\"birthDate\":\"13-03-1985\"}";
+        assertEquals(str, json.toJson(human));
     }
 
     @DisplayName("Happy path")
@@ -45,6 +47,7 @@ public class JsonTest {
     public void test3_toJson() throws IllegalAccessException {
         human = new Human(null, null, null,
                 null);
+        String str = "{}";
         String expected = json.toJson(human);
         assertEquals(expected, json.toJson(human));
     }

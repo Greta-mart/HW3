@@ -1,75 +1,52 @@
 package skillsup;
 
+import com.google.gson.JsonObject;
+
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class Json {
-    public String toJson(Object obj) throws IllegalAccessException {
-        return obj != null ? processObj(obj, new StringBuffer()) : "";
-    }
-
-    private String processObj(Object obj, StringBuffer buffer) throws IllegalAccessException {
-        buffer.append("{");
-        boolean fieldProcessed = false;
-        for (Field field : obj.getClass().getDeclaredFields()) {
-            if (fieldProcessed) {
-                buffer.append(",");
+    private String serializeWithJsonObject(Object object) throws IllegalArgumentException, IllegalAccessException {
+        if (object == null) {
+            return "";
+        }
+        JsonObject jsonObject = new JsonObject();
+        for (Field field : object.getClass().getDeclaredFields()) {
+                field.setAccessible(true);
+            Object fieldValue = field.get(object);
+            if (fieldValue == null) {
+                continue;
             }
-            fieldProcessed = appendField(obj, field, buffer);
+            String property = property(field);
+            Class<?> fieldType = field.getType();
+            if (fieldType.equals(String.class)) {
+                jsonObject.addProperty(property, (String) fieldValue);
+            } else if (fieldType.equals(LocalDate.class)) {
+                final LocalDate localDate = (LocalDate) fieldValue;
+                final Optional<String> format = field.isAnnotationPresent(CustomDateFormat.class)
+                        ? Optional.of(field.getAnnotation(CustomDateFormat.class).format())
+                        : Optional.empty();
+                jsonObject.addProperty(property, format.map(fmt -> DateTimeFormatter.ofPattern(fmt).format(localDate))
+                        .orElseGet(localDate::toString));
+            } else if (fieldType.isPrimitive() == false) {
+                jsonObject.addProperty(property, serializeWithJsonObject(fieldValue));
+            } else {
+                jsonObject.addProperty(property, fieldValue.toString());
+            }
         }
-        buffer.append("}");
-        return buffer.toString();
+        return jsonObject.toString();
     }
 
-    private boolean appendField(Object obj, Field field, StringBuffer buffer) throws IllegalAccessException {
-        boolean fieldProcessed = false;
-        boolean isAccessModified = !field.isAccessible();
-        if (isAccessModified) {
-            field.setAccessible(true);
+    private String property(final Field field) {
+        if (field.isAnnotationPresent(JsonValue.class)) {
+            return field.getAnnotation(JsonValue.class).name();
         }
-        Object result;
-        result = field.get(obj);
-        if (result != null) {
-            appendFieldName(field, buffer);
-            appendFieldValue(result, field, buffer);
-            fieldProcessed = true;
-        }
-        return fieldProcessed;
+        return field.getName();
     }
 
-    private void appendFieldValue(Object result, Field field, StringBuffer buffer) throws IllegalAccessException {
-        Class<?> fieldType = field.getType();
-        if (fieldType.equals(String.class)) {
-            // String
-            buffer.append("\"").append(result).append("\"");
-        } else if (fieldType.isAssignableFrom(LocalDate.class)) {
-             //LocalDate
-            Optional<String> dateformat =
-                    field.isAnnotationPresent(CustomDateFormat.class) ?
-                            Optional.of(field.getAnnotation(CustomDateFormat.class).format()) :
-                            Optional.empty();
-            appendLocalDate((LocalDate) result, dateformat, buffer);
-        }
-        else if (!fieldType.isPrimitive()) {
-            processObj(result, buffer);
-        } else {
-            buffer.append(result);
-        }
-    }
-
-    private void appendFieldName(Field field, StringBuffer buffer) {
-        buffer.append("\"").append(
-                        field.isAnnotationPresent(JsonValue.class) ?
-                                field.getAnnotation(JsonValue.class).name() :
-                                field.getName())
-                .append("\":");
-    }
-
-    private void appendLocalDate(LocalDate date, Optional<String> dateFormat, StringBuffer buffer) {
-        buffer.append(
-                dateFormat.map(s -> DateTimeFormatter.ofPattern(s).format(date)).orElseGet(date::toString)
-        );
+    public String toJson(Object obj) throws IllegalAccessException {
+        return serializeWithJsonObject(obj);
     }
 }
