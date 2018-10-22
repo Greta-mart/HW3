@@ -14,7 +14,13 @@ public class Main {
 
         System.out.println(json);
 
+        //google json
         Json service = new Json();
         System.out.println(service.toJson(human));
+
+        //my realization json
+        Json_second serv = new Json_second();
+        System.out.println(serv.toJson1(human));
+
     }
 }
